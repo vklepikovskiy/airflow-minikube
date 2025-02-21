@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-webserver
+  labels:
+    app: airflow
+    component: webserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow
+      component: webserver
+  template:
+    metadata:
+      labels:
+        app: airflow
+        component: webserver
+    spec:
+      initContainers:
+        - name: check-migrations
+          image: apache/airflow:2.10.5
+          imagePullPolicy: IfNotPresent
+          args:
+            - db
+            - check-migrations
+          envFrom:
+            - configMapRef:
+                name: airflow-env
+      containers:
+        - name: airflow-webserver
+          image: apache/airflow:2.10.5
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          args:
+            - webserver
+          envFrom:
+            - configMapRef:
+                name: airflow-env

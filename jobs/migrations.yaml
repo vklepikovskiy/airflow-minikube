@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: airflow-migrations
+  labels:
+    app: airflow
+    component: migrations
+spec:
+  template:
+    metadata:
+      labels:
+        app: airflow
+        component: migrations
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: airflow-migrations
+          image: apache/airflow:2.10.5
+          imagePullPolicy: IfNotPresent
+          args:
+            - db
+            - migrate
+          envFrom:
+            - configMapRef:
+                name: airflow-env

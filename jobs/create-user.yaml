@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: airflow-create-user
+  labels:
+    app: airflow
+    component: create-user
+spec:
+  template:
+    metadata:
+      labels:
+        app: airflow
+        component: create-user
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: check-migrations
+          image: apache/airflow:2.10.5
+          imagePullPolicy: IfNotPresent
+          args:
+            - db
+            - check-migrations
+          envFrom:
+            - configMapRef:
+                name: airflow-env
+      containers:
+        - name: airflow-create-user
+          image: apache/airflow:2.10.5
+          imagePullPolicy: IfNotPresent
+          args:
+            - users
+            - create
+            - -u
+            - admin
+            - -f
+            - admin
+            - -l
+            - user
+            - -r
+            - Admin
+            - -e
+            - admin@example.com
+            - -p
+            - admin
+          envFrom:
+            - configMapRef:
+                name: airflow-env
