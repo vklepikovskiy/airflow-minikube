@@ -11,6 +11,10 @@ case $1 in
         echo "Listing all Airflow deployments"
         minikube kubectl -- get deployments -l app=airflow
         ;;
+    "list-replicasets")
+        echo "Listing all Airflow replica sets"
+        minikube kubectl -- get replicasets -l app=airflow
+        ;;
     "list-pods")
         echo "Listing all Airflow pods"
         minikube kubectl -- get pods -l app=airflow
@@ -27,39 +31,47 @@ case $1 in
         echo "Listing all Airflow configmaps"
         minikube kubectl -- get configmaps -l app=airflow
         ;;
+    "list-persistentvolumes")
+        echo "Listing all Airflow persistent volumes and claims"
+        minikube kubectl -- get persistentvolumes,persistentvolumeclaims -l app=airflow
+        ;;
     "list-all")
         echo "Listing all Airflow resources"
-        minikube kubectl -- get deployments,pods,service,jobs,configmaps -l app=airflow
+        minikube kubectl -- get deployments,replicasets,pods,service,jobs,configmaps,persistentvolumes,persistentvolumeclaims -l app=airflow
         ;;
     "list-postgres")
         echo "Listing all postgres resources"
-        minikube kubectl -- get deployments,pods,service,jobs,configmaps -l app=airflow,component=postgres
+        minikube kubectl -- get deployments,replicasets,pods,service,jobs,configmaps,persistentvolumes,persistentvolumeclaims -l app=airflow,component=postgres
         ;;
     "list-migrations")
         echo "Listing all migrations resources"
-        minikube kubectl -- get deployments,pods,service,jobs,configmaps -l app=airflow,component=migrations
+        minikube kubectl -- get deployments,replicasets,pods,service,jobs,configmaps,persistentvolumes,persistentvolumeclaims -l app=airflow,component=migrations
         ;;
     "list-create-user")
         echo "Listing all create-user resources"
-        minikube kubectl -- get deployments,pods,service,jobs,configmaps -l app=airflow,component=create-user
+        minikube kubectl -- get deployments,replicasets,pods,service,jobs,configmaps,persistentvolumes,persistentvolumeclaims -l app=airflow,component=create-user
         ;;
     "list-webserver")
         echo "Listing all webserver resources"
-        minikube kubectl -- get deployments,pods,service,jobs,configmaps -l app=airflow,component=webserver
+        minikube kubectl -- get deployments,replicasets,pods,service,jobs,configmaps,persistentvolumes,persistentvolumeclaims -l app=airflow,component=webserver
         ;;
     "list-scheduler")
         echo "Listing all scheduler resources"
-        minikube kubectl -- get deployments,pods,service,jobs,configmaps -l app=airflow,component=scheduler
+        minikube kubectl -- get deployments,replicasets,pods,service,jobs,configmaps,persistentvolumes,persistentvolumeclaims -l app=airflow,component=scheduler
         ;;
     "list-config")
         echo "Listing all config resources"
-        minikube kubectl -- get deployments,pods,service,jobs,configmaps -l app=airflow,component=config
+        minikube kubectl -- get deployments,replicasets,pods,service,jobs,configmaps,persistentvolumes,persistentvolumeclaims -l app=airflow,component=config
         ;;
 
     # Delete Airflow resources commands
     "delete-deployments")
         echo "Deleting all Airflow deployments"
         minikube kubectl -- delete deployments -l app=airflow
+        ;;
+    "delete-replicasets")
+        echo "Deleting all Airflow replica sets"
+        minikube kubectl -- delete replicasets -l app=airflow
         ;;
     "delete-pods")
         echo "Deleting all Airflow pods"
@@ -77,33 +89,37 @@ case $1 in
         echo "Deleting all Airflow configmaps"
         minikube kubectl -- delete configmaps -l app=airflow
         ;;
+    "delete-persistentvolumes")
+        echo "Deleting all Airflow persistent volumes and claims"
+        minikube kubectl -- delete persistentvolumes,persistentvolumeclaims -l app=airflow
+        ;;
     "delete-all")
         echo "Deleting all Airflow resources"
-        minikube kubectl -- delete deployments,pods,services,jobs,configmaps -l app=airflow
+        minikube kubectl -- delete deployments,replicasets,pods,services,jobs,configmaps -l app=airflow
         ;;
     "delete-postgres")
         echo "Deleting all postgres resources"
-        minikube kubectl -- delete deployments,pods,services,jobs,configmaps -l app=airflow,component=postgres
+        minikube kubectl -- delete deployments,replicasets,pods,services,jobs,configmaps -l app=airflow,component=postgres
         ;;
     "delete-migrations")
         echo "Deleting all migrations resources"
-        minikube kubectl -- delete deployments,pods,services,jobs,configmaps -l app=airflow,component=migrations
+        minikube kubectl -- delete deployments,replicasets,pods,services,jobs,configmaps -l app=airflow,component=migrations
         ;;
     "delete-create-user")
         echo "Deleting all create-user resources"
-        minikube kubectl -- delete deployments,pods,services,jobs,configmaps -l app=airflow,component=create-user
+        minikube kubectl -- delete deployments,replicasets,pods,services,jobs,configmaps -l app=airflow,component=create-user
         ;;
     "delete-webserver")
         echo "Deleting all webserver resources"
-        minikube kubectl -- delete deployments,pods,services,jobs,configmaps -l app=airflow,component=webserver
+        minikube kubectl -- delete deployments,replicasets,pods,services,jobs,configmaps -l app=airflow,component=webserver
         ;;
     "delete-scheduler")
         echo "Deleting all scheduler resources"
-        minikube kubectl -- delete deployments,pods,services,jobs,configmaps -l app=airflow,component=scheduler
+        minikube kubectl -- delete deployments,replicasets,pods,services,jobs,configmaps -l app=airflow,component=scheduler
         ;;
     "delete-config")
         echo "Deleting all config resources"
-        minikube kubectl -- delete deployments,pods,services,jobs,configmaps -l app=airflow,component=config
+        minikube kubectl -- delete deployments,replicasets,pods,services,jobs,configmaps -l app=airflow,component=config
         ;;
 
     # Logs commands
@@ -131,30 +147,31 @@ case $1 in
     # Deploy commands
     "postgres")
         echo "Deploying Postgres"
-        minikube kubectl -- apply -f configmaps/postgres-env.yaml
-        minikube kubectl -- apply -f deployments/postgres.yaml
-        minikube kubectl -- apply -f services/postgres.yaml
+        minikube kubectl -- apply -f manifests/configmaps/postgres-env.yaml
+        minikube kubectl -- apply -f manifests/persistentvolumes/postgres.yaml
+        minikube kubectl -- apply -f manifests/deployments/postgres.yaml
+        minikube kubectl -- apply -f manifests/services/postgres.yaml
         ;;
     "migrations")
         echo "Running migrations"
-        minikube kubectl -- apply -f configmaps/airflow-env.yaml
-        minikube kubectl -- apply -f jobs/migrations.yaml
+        minikube kubectl -- apply -f manifests/configmaps/airflow-env.yaml
+        minikube kubectl -- apply -f manifests/jobs/migrations.yaml
         ;;
     "create-user")
         echo "Creating Airflow user"
-        minikube kubectl -- apply -f configmaps/airflow-env.yaml
-        minikube kubectl -- apply -f jobs/create-user.yaml
+        minikube kubectl -- apply -f manifests/configmaps/airflow-env.yaml
+        minikube kubectl -- apply -f manifests/jobs/create-user.yaml
         ;;
     "webserver")
         echo "Deploying Airflow webserver"
-        minikube kubectl -- apply -f configmaps/airflow-env.yaml
-        minikube kubectl -- apply -f deployments/webserver.yaml
-        minikube kubectl -- apply -f services/webserver.yaml
+        minikube kubectl -- apply -f manifests/configmaps/airflow-env.yaml
+        minikube kubectl -- apply -f manifests/deployments/webserver.yaml
+        minikube kubectl -- apply -f manifests/services/webserver.yaml
         ;;
     "scheduler")
         echo "Deploying Airflow scheduler"
-        minikube kubectl -- apply -f configmaps/airflow-env.yaml
-        minikube kubectl -- apply -f deployments/scheduler.yaml
+        minikube kubectl -- apply -f manifests/configmaps/airflow-env.yaml
+        minikube kubectl -- apply -f manifests/deployments/scheduler.yaml
         ;;
     "all")
         $0 postgres
