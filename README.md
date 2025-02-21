@@ -5,6 +5,10 @@ Install/upgrade minikube:
 ```
 $ ./bin/minikube-install.sh
 ```
+Start minikube cluster:
+```
+$ minikube start
+```
 Deploy Airflow to Minikube:
 ```
 $ ./bin/start.sh all
