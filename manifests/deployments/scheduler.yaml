@@ -36,3 +36,10 @@ spec:
           envFrom:
             - configMapRef:
                 name: airflow-env
+          volumeMounts:
+            - name: airflow-dags
+              mountPath: /opt/airflow/dags
+      volumes:
+        - name: airflow-dags
+          persistentVolumeClaim:
+            claimName: airflow-dags-pvc

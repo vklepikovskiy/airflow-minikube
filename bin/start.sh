@@ -171,6 +171,7 @@ case $1 in
     "scheduler")
         echo "Deploying Airflow scheduler"
         minikube kubectl -- apply -f manifests/configmaps/airflow-env.yaml
+        minikube kubectl -- apply -f manifests/persistentvolumes/dags.yaml
         minikube kubectl -- apply -f manifests/deployments/scheduler.yaml
         ;;
     "all")
@@ -181,6 +182,22 @@ case $1 in
         $0 scheduler
         ;;
 
+    # Other commands
+    "init-venv")
+        echo "Initializing virtual environment"
+        if [ ! -d .venv ]; then
+            python3 -m venv .venv
+        fi
+        source .venv/bin/activate
+        pip install -r requirements.txt
+        ;;
+    "sync-dags")
+        echo "Syncing dags"
+        for file in $(ls dags/*.py); do
+            echo "Copying $file"
+            minikube cp $file /mnt/data/airflow/$file
+        done
+        ;;
     "url")
         echo "Getting Airflow webserver URL"
         minikube service --url airflow-webserver

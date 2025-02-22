@@ -1,5 +1,5 @@
 # airflow-minikube
- Minikube sandbox for Apache Airflow
+Minikube sandbox for Apache Airflow
 ## How to use
 Install/upgrade minikube:
 ```
@@ -13,7 +13,15 @@ Deploy Airflow to Minikube:
 ```
 $ ./bin/start.sh all
 ```
-Get sandbox URL:
+Sync dags with Airflow
+```
+$ ./bin/start.sh sync-dags
+```
+Create virtual environment
+```
+$ ./bin/start.sh init-venv
+```
+Get sandbox URL (credentials: admin/admin):
 ```
 $ ./bin/start.sh url
 ```
