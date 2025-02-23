@@ -25,3 +25,7 @@ Get sandbox URL (credentials: admin/admin):
 ```
 $ ./bin/start.sh url
 ```
+Run Airflow CLI command
+```
+$ ./bin/start.sh cli <command>
+```

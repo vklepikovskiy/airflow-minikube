@@ -201,6 +201,11 @@ case $1 in
             minikube cp $file /mnt/data/airflow/$file
         done
         ;;
+    "cli")
+        echo "Running Airflow CLI"
+        shift
+        minikube kubectl -- exec -it $(minikube kubectl -- get pods -l app=airflow,component=scheduler -o jsonpath="{.items[0].metadata.name}") -c airflow-scheduler -- airflow $@
+        ;;
     "url")
         echo "Getting Airflow webserver URL"
         minikube service --url airflow-webserver
