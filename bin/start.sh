@@ -165,6 +165,8 @@ case $1 in
     "webserver")
         echo "Deploying Airflow webserver"
         minikube kubectl -- apply -f manifests/configmaps/airflow-env.yaml
+        minikube kubectl -- apply -f manifests/persistentvolumes/dags.yaml
+        minikube kubectl -- apply -f manifests/persistentvolumes/logs.yaml
         minikube kubectl -- apply -f manifests/deployments/webserver.yaml
         minikube kubectl -- apply -f manifests/services/webserver.yaml
         ;;
@@ -172,6 +174,7 @@ case $1 in
         echo "Deploying Airflow scheduler"
         minikube kubectl -- apply -f manifests/configmaps/airflow-env.yaml
         minikube kubectl -- apply -f manifests/persistentvolumes/dags.yaml
+        minikube kubectl -- apply -f manifests/persistentvolumes/logs.yaml
         minikube kubectl -- apply -f manifests/deployments/scheduler.yaml
         ;;
     "all")

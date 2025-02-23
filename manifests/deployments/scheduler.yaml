@@ -18,6 +18,20 @@ spec:
         component: scheduler
     spec:
       initContainers:
+        - name: chown
+          image: apache/airflow:2.10.5
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          command:
+            - /bin/sh
+            - -c
+            - chown -R 50000:0 /opt/airflow/dags /opt/airflow/logs
+          volumeMounts:
+            - name: airflow-dags
+              mountPath: /opt/airflow/dags
+            - name: airflow-logs
+              mountPath: /opt/airflow/logs
         - name: check-migrations
           image: apache/airflow:2.10.5
           imagePullPolicy: IfNotPresent
@@ -39,7 +53,12 @@ spec:
           volumeMounts:
             - name: airflow-dags
               mountPath: /opt/airflow/dags
+            - name: airflow-logs
+              mountPath: /opt/airflow/logs
       volumes:
         - name: airflow-dags
           persistentVolumeClaim:
             claimName: airflow-dags-pvc
+        - name: airflow-logs
+          persistentVolumeClaim:
+            claimName: airflow-logs-pvc

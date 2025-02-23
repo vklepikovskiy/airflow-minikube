@@ -1,26 +1,26 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: airflow-dags-pv
+  name: airflow-logs-pv
   labels:
     app: airflow
-    component: dags
+    component: logs
 spec:
   capacity:
-    storage: 10Mi
+    storage: 100Mi
   accessModes:
     - ReadWriteMany
   storageClassName: manual
   hostPath:
-    path: /mnt/data/airflow/dags
+    path: /mnt/data/airflow/logs
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: airflow-dags-pvc
+  name: airflow-logs-pvc
   labels:
     app: airflow
-    component: dags
+    component: logs
 spec:
   accessModes:
     - ReadWriteMany
